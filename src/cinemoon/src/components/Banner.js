@@ -1,43 +1,61 @@
 import React, {useEffect, useState} from 'react';
 import axios from '../axios';
-import requests from "../Requests";
+import requests, { API_KEY } from "../Requests";
+import ModalVideo from 'react-modal-video';
+
 import './Banner.css';
+import '../../node_modules/react-modal-video/scss/modal-video.scss';
 
 const Banner = () => {
     const [movie, setMovie] = useState([]);
+    const [isOpen, setOpen] = useState(false);
+    const [video, setVideo] = useState("");
 
     const truncate = (string, n) => {
-        return string?.length > n ? string.substr(0, n - 1) + '...' : string
+        return string?.length > n ? string.substr(0, n - 1) + '...' : string;
     }
 
-    const fetchData = async () => {
-        const request = await axios.get(requests.fetchOriginals);
-        setMovie(
-            request.data.results[
-                Math.floor(Math.random() * request.data.results.length - 1)
-            ]
-        );
-        return request;
+    const fetchData = () => {
+        axios.get(requests.fetchOriginals)
+            .then(res => res.data.results)
+            .then(movies => {
+                setMovie(
+                    movies[Math.floor(Math.random() * movies.length - 1)]
+                );
+                return movies;
+            });
+    }
+
+    const fetchVideoTrailer = () => {
+        axios.get(`/tv/${movie.id}/videos?api_key=${API_KEY}&language=en-US`)
+            .then(res => res.data.results[0])
+            .then(video => {
+                setVideo(video.key);
+                return video;
+            });
     }
 
     useEffect(() => {
-        fetchData();
-    }, [])
+        if(movie.length === 0)
+            fetchData()
+        else
+            fetchVideoTrailer()
+    }, [movie]);
 
-    console.log(movie)
 
     return (
         <header className="banner" style={{
             backgroundSize: "cover",
             backgroundImage: `url('https://image.tmdb.org/t/p/original${movie?.backdrop_path}')`,
-            backgroundPosition: "center center"
+            backgroundPosition: "50% 25%"
         }}>
+            <ModalVideo channel='youtube' autoplay isOpen={isOpen} videoId={video} onClose={() => setOpen(false)} />
             <div className="banner__contents">
                 <h1 className="banner__title">
                     {movie?.title || movie?.name || movie?.original_name}
                 </h1>
                 <div className="banner__buttons">
-                    <button className="banner__button">Play</button>
+                    <button className="banner__button" onClick={() => setOpen(true)}>Play</button>
                     <button className="banner__button">My List</button>
                 </div>
                 <h1 className="banner__description">
