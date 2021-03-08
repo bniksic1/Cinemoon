@@ -11,6 +11,7 @@ const LoginScreen = () => {
                 <img
                     className="loginScreen__logo"
                     alt="Logo"
+                    onClick={() => setSignIn(false)}
                 />
                 <button
                     onClick={() => setSignIn(true)}
