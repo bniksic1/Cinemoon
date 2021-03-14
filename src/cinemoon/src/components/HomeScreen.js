@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import './HomeScreen.css';
 import Nav from "./Nav";
 import Banner from "./Banner";
@@ -6,6 +6,11 @@ import Row from "./Row";
 import requests from "../Requests";
 
 const HomeScreen = () => {
+
+    useEffect(() => {
+
+    }, []);
+
     return (
         <div className="homeScreen">
             <Nav />
