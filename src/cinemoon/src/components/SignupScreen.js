@@ -1,14 +1,17 @@
 import React, {useRef, useState} from 'react';
 import axios from "axios";
 import './SignupScreen.css';
+import {useDispatch} from "react-redux";
+import {login} from "../features/userSlice";
 
 
-const SignupScreen = () => {
+const SignupScreen = ({setIsLoggedIn}) => {
     const [isSigningUp, setIsSigningUp] = useState(false);
     const usernameRef = useRef(null);
     const numberRef = useRef(null);
     const emailRef = useRef(null);
     const passwordRef = useRef(null);
+    const dispatch = useDispatch();
 
     const createNewUserDetails = () => (
         {
@@ -31,7 +34,7 @@ const SignupScreen = () => {
         axios.post("http://localhost:8080/api/auth/register", createNewUserDetails())
             .then(res => res.data)
             .then(user => {
-
+                signIn(ev);
             })
             .catch(err => {
 
@@ -43,7 +46,9 @@ const SignupScreen = () => {
         axios.post("http://localhost:8080/api/auth/login", createLoginCredentials())
             .then(res => res.data)
             .then(user => {
-                console.log(user)
+                localStorage.setItem('jwt', user.token);
+                setIsLoggedIn(true);
+                dispatch(login(user.user));
             })
             .catch(err => {
                 alert(err.message)

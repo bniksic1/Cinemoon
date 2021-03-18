@@ -1,6 +1,7 @@
 package com.github.bniksic1.controller;
 
 import com.github.bniksic1.domain.User;
+import com.github.bniksic1.security.JsonWebTokenProvider;
 import com.github.bniksic1.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONArray;
@@ -27,14 +28,17 @@ public class AuthenticationController {
     @Autowired
     private UserService userService;
 
-    @GetMapping(path = "check")
-    public ResponseEntity<User> checkLogin() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(!authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken)
-            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+    @Autowired
+    private JsonWebTokenProvider tokenProvider;
 
-        return new ResponseEntity<>(null, HttpStatus.OK);
-    }
+//    @GetMapping(path = "check")
+//    public ResponseEntity<User> checkLogin() {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        if(!authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken)
+//            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+//
+//        return new ResponseEntity<>(null, HttpStatus.OK);
+//    }
 
     @PostMapping(path = "register")
     public ResponseEntity<User> registerUser(@RequestBody User user) {
@@ -52,12 +56,9 @@ public class AuthenticationController {
                     .authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
             if (authentication.isAuthenticated()) {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-                jsonObject.put("name", authentication.getName());
+                User realUser = userService.getUserByUsernameOrEmail(user.getUsername(), user.getUsername()).get();
+                jsonObject.put("token", tokenProvider.createToken(realUser));
 
-                JSONArray authorities = new JSONArray();
-                for(GrantedAuthority authority : authentication.getAuthorities())
-                    authorities.put(authority.getAuthority());
-                jsonObject.put("authorities", authorities);
                 return new ResponseEntity<>(jsonObject.toString(), HttpStatus.OK);
             }
         } catch (JSONException e) {
@@ -71,15 +72,15 @@ public class AuthenticationController {
         return null;
     }
 
-    @PostMapping(path = "logout", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> authenticateLogout() {
-        SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
-        try {
-            JSONObject jsonObject = new JSONObject().put("message", "Logout successfully");
-            return new ResponseEntity<>(jsonObject.toString(), HttpStatus.OK);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return new ResponseEntity<>("", HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+//    @PostMapping(path = "logout", produces = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<String> authenticateLogout() {
+//        SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
+//        try {
+//            JSONObject jsonObject = new JSONObject().put("message", "Logout successfully");
+//            return new ResponseEntity<>(jsonObject.toString(), HttpStatus.OK);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        return new ResponseEntity<>("", HttpStatus.INTERNAL_SERVER_ERROR);
+//    }
 }

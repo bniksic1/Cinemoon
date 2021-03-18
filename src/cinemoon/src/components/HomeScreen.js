@@ -6,11 +6,6 @@ import Row from "./Row";
 import requests from "../Requests";
 
 const HomeScreen = () => {
-
-    useEffect(() => {
-
-    }, []);
-
     return (
         <div className="homeScreen">
             <Nav />

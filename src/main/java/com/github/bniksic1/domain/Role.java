@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 @Data
@@ -15,7 +17,15 @@ import java.util.Set;
 @Table(name = "tbl_role")
 public class Role {
     @Id
-    @GeneratedValue
+    @SequenceGenerator(
+            name = "role_sequence",
+            sequenceName = "role_sequence",
+            allocationSize = 1
+    )
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "role_sequence"
+    )
     @Column(updatable = false)
     private Integer id;
 
@@ -38,5 +48,10 @@ public class Role {
         return id;
     }
 
-
+    public Map<String, String> toHashMap(){
+        Map<String, String> map = new HashMap<>();
+        map.put("id", Long.toString(id));
+        map.put("name", name);
+        return map;
+    }
 }

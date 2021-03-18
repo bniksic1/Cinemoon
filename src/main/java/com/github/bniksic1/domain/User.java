@@ -5,13 +5,23 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.HashMap;
+import java.util.Map;
 
 @Data
 @Entity
 @Table(name = "tbl_user")
 public class User {
     @Id
-    @GeneratedValue
+    @SequenceGenerator(
+            name = "user_sequence",
+            sequenceName = "user_sequence",
+            allocationSize = 1
+    )
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "user_sequence"
+    )
     @Column(updatable = false)
     private Integer id;
 
@@ -29,6 +39,10 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;
+
+    @ManyToOne
+    @JoinColumn(name = "plan_id")
+    private Plan plan;
 
     public String getUsername() {
         return username;
@@ -54,5 +68,24 @@ public class User {
     @JsonProperty
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public Plan getPlan() {
+        return plan;
+    }
+
+    public Map<String, Object> toHashMap(){
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", Long.toString(id));
+        map.put("username", getUsername());
+        map.put("phoneNumber", getPhoneNumber());
+        map.put("email", getEmail());
+        map.put("authId", getRole().getId());
+        map.put("planId", getPlan().getId());
+        return map;
     }
 }
