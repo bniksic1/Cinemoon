@@ -3,6 +3,7 @@ import axios from "axios";
 import './SignupScreen.css';
 import {useDispatch} from "react-redux";
 import {login} from "../features/userSlice";
+import {decodeToken} from "react-jwt";
 
 
 const SignupScreen = ({setIsLoggedIn}) => {
@@ -48,10 +49,10 @@ const SignupScreen = ({setIsLoggedIn}) => {
             .then(user => {
                 localStorage.setItem('jwt', user.token);
                 setIsLoggedIn(true);
-                dispatch(login(user.user));
+                dispatch(login(decodeToken(user.token)));
             })
             .catch(err => {
-                alert(err.message)
+                alert("Incorrect credentials data entered. Try again!")
             });
     };
 

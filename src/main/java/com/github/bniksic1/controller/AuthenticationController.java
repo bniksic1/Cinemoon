@@ -31,15 +31,6 @@ public class AuthenticationController {
     @Autowired
     private JsonWebTokenProvider tokenProvider;
 
-//    @GetMapping(path = "check")
-//    public ResponseEntity<User> checkLogin() {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        if(!authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken)
-//            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
-//
-//        return new ResponseEntity<>(null, HttpStatus.OK);
-//    }
-
     @PostMapping(path = "register")
     public ResponseEntity<User> registerUser(@RequestBody User user) {
         if(userService.getUserByUsernameOrEmail(user.getUsername(), user.getEmail()).isPresent())
@@ -58,7 +49,6 @@ public class AuthenticationController {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 User realUser = userService.getUserByUsernameOrEmail(user.getUsername(), user.getUsername()).get();
                 jsonObject.put("token", tokenProvider.createToken(realUser));
-
                 return new ResponseEntity<>(jsonObject.toString(), HttpStatus.OK);
             }
         } catch (JSONException e) {
@@ -72,15 +62,4 @@ public class AuthenticationController {
         return null;
     }
 
-//    @PostMapping(path = "logout", produces = MediaType.APPLICATION_JSON_VALUE)
-//    public ResponseEntity<String> authenticateLogout() {
-//        SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
-//        try {
-//            JSONObject jsonObject = new JSONObject().put("message", "Logout successfully");
-//            return new ResponseEntity<>(jsonObject.toString(), HttpStatus.OK);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//        return new ResponseEntity<>("", HttpStatus.INTERNAL_SERVER_ERROR);
-//    }
 }

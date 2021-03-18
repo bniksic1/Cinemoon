@@ -22,7 +22,7 @@ import java.util.Date;
 @Component
 public class JsonWebTokenProvider implements Serializable {
     private static final long serialVersionUID = 2569800841756370596L;
-    private final long validationPeriodInMilliseconds = (1000 * 60) * 5;
+    private final long validationPeriodInMilliseconds = (1000 * 60) * 10;
 
     @Value("${jwt.secret-key}")
     private String secretKey;
@@ -37,9 +37,13 @@ public class JsonWebTokenProvider implements Serializable {
 
     public String createToken(User user){
         Claims claims = Jwts.claims();
-        claims.put("user", user.toHashMap());
-//        claims.put("authId", user.getRole().getId());
-//        claims.put("planId", user.getPlan().getId());
+        claims.setSubject(user.getUsername());
+        claims.put("id", user.getId());
+        claims.put("username", user.getUsername());
+        claims.put("email", user.getEmail());
+        claims.put("phoneNumber", user.getPhoneNumber());
+        claims.put("authId", user.getRole().getId());
+        claims.put("planId", user.getPlan().getId());
         Date now = new Date();
 
         return Jwts.builder()

@@ -1,16 +1,29 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import './App.css';
 import HomeScreen from "./components/HomeScreen";
 import {BrowserRouter as Router, Switch, Route} from "react-router-dom";
 import LoginScreen from "./components/LoginScreen";
-import { isExpired } from "react-jwt";
+import { decodeToken, isExpired } from "react-jwt";
 import ProfileScreen from "./components/ProfileScreen";
 
+import {useSelector, useDispatch} from "react-redux";
+import {selectUser, login} from "./features/userSlice";
 
 function App() {
-    const [isLoggedIn, setIsLoggedIn] = useState(
-        !isExpired(localStorage.getItem('jwt'))
-    );
+    const user = useSelector(selectUser);
+    const dispatch = useDispatch();
+
+    const token = localStorage.getItem('jwt');
+    const [isLoggedIn, setIsLoggedIn] = useState(decodeToken(token) != null && !isExpired(token));
+
+    if(isExpired(token))
+        localStorage.removeItem("jwt");
+    else if(user == null)
+        dispatch(login(decodeToken(token)));
+
+    useEffect(() => {
+
+    }, []);
 
     return (
         <div className="app">

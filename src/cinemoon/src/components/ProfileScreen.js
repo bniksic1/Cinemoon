@@ -1,15 +1,22 @@
 import React, {useEffect} from 'react';
 import "./ProfileScreen.css";
 import Nav from "./Nav";
-import { decodeToken } from "react-jwt";
 import PlansScreen from "./PlansScreen";
+import {useHistory} from "react-router-dom";
+import {useDispatch, useSelector} from "react-redux";
+import {selectUser, logout} from "../features/userSlice";
 
 const ProfileScreen = ({setIsLoggedIn}) => {
-    const user = decodeToken(localStorage.getItem('jwt')).user;
+    const user = useSelector(selectUser);
+    const dispatch = useDispatch();
+
+    const history = useHistory();
 
     const logOutUser = () => {
         localStorage.removeItem('jwt');
         setIsLoggedIn(false);
+        dispatch(logout());
+        history.push("/");
     }
 
     return (
@@ -26,7 +33,7 @@ const ProfileScreen = ({setIsLoggedIn}) => {
                         <h2>{user.email}</h2>
                         <div className="profileScreen__plans">
                             <h3>Plans</h3>
-                            <PlansScreen user={user}/>
+                            <PlansScreen />
                             <button
                                 onClick={logOutUser}
                                 className="profileScreen_signOut"

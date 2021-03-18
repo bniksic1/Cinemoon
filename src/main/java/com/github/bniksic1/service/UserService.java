@@ -36,4 +36,9 @@ public class UserService {
     public void deleteUser(User user){
         userRepository.delete(user);
     }
+
+    public void updateUserPlanById(User user){
+        Integer planId = user.getPlan() == null ? null : user.getPlan().getId();
+        userRepository.updateUserPlanById(planId, user.getId());
+    }
 }

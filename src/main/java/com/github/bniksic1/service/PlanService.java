@@ -16,7 +16,7 @@ public class PlanService {
         return planRepository.findAll();
     }
 
-    public Plan addNewPlan(Plan plan){
-        return planRepository.save(plan);
+    public Plan addOrUpdatePlan(Plan plan){
+        return planRepository.saveAndFlush(plan);
     }
 }

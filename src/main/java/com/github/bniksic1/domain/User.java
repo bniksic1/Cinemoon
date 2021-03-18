@@ -78,6 +78,10 @@ public class User {
         return plan;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
     public Map<String, Object> toHashMap(){
         Map<String, Object> map = new HashMap<>();
         map.put("id", Long.toString(id));

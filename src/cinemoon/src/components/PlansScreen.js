@@ -1,18 +1,22 @@
 import React, {useEffect, useState} from 'react';
 import './PlansScreen.css';
 import axios from "axios";
+import {useDispatch, useSelector} from "react-redux";
+import {selectUser, update} from "../features/userSlice";
 
-const PlansScreen = ({user}) => {
+const PlansScreen = () => {
+    const user = useSelector(selectUser);
+    const dispatch = useDispatch();
+
     const [products, setProducts] = useState([]);
 
-    console.log(user);
-
-    const subscribePlan = () => {
-
+    const subscribePlan = (productId) => {
+        dispatch(update({planId: productId}));
     }
 
     const unsubscribePlan = () => {
-
+        console.log("UNSUB");
+        dispatch(update({planId: null}));
     }
 
     const mapProducts = products.map(product => (
@@ -23,9 +27,9 @@ const PlansScreen = ({user}) => {
             </div>
             {
                 product.id === user.planId ?
-                    <button onClick={() => unsubscribePlan}>Unsubscribe</button>
+                    <button onClick={() => unsubscribePlan} className="plansScreen__subscribed">Subscribed</button>
                     :
-                    <button onClick={() => subscribePlan}>Subscribe</button>
+                    <button onClick={() => subscribePlan(product.id)}>Subscribe</button>
             }
         </div>
     ))

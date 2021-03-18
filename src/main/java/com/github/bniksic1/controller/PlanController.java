@@ -23,6 +23,11 @@ public class PlanController {
 
     @PostMapping
     public ResponseEntity<Plan> addNewPlan(@RequestBody Plan plan){
-        return new ResponseEntity<>(planService.addNewPlan(plan), HttpStatus.OK);
+        return new ResponseEntity<>(planService.addOrUpdatePlan(plan), HttpStatus.OK);
+    }
+
+    @PutMapping
+    public ResponseEntity<Plan> updatePlan(@RequestBody Plan plan){
+        return new ResponseEntity<>(planService.addOrUpdatePlan(plan), HttpStatus.OK);
     }
 }
