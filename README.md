@@ -4,8 +4,6 @@
   <a href="https://github.com/bniksic1/MovieStore">
     <img src="https://i.imgur.com/lQsNLgX.png" alt="Logo" height="80">
   </a>
-
-  <h3 align="center">Cinemoon</h3>
 </p>
 
 
